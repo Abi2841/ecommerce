@@ -4,11 +4,10 @@ from urllib import request
 from django.views import View
 from .models import Product
 from django.db.models import Count
-from .forms import CustomerRegistrationForm
+from .forms import CustomerRegistrationForm, CustomerProfileForm
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
-# Create your views here.
- 
+
 
 def home(request):
     return render(request ,"app/home.html")
@@ -41,12 +40,35 @@ class CustomerRegistrationView(View):
     def get(self, request):
         form = CustomerRegistrationForm()
         return render(request, 'app/customerregistration.html', locals())
-    @csrf_protect
     def post(self,request):
         form = CustomerRegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request,"congratulations!!! User Registered Succesfully")
+            messages.success(request,"Congratulations!!! User Registered Succesfully")
         else:
             messages.warning(request, "Invalid Input Data")
         return render(request, 'app/customerregistration.html',locals())  
+
+class ProfileView(View):
+    def get(self, request):
+        form = CustomerProfileForm()
+        return render(request, 'app/profile.html',locals())  
+    def post(self, request): 
+        return render(request, 'app/profile.html',locals())     
+
+
+#API_PART
+from rest_framework import generics
+from products.models import Product
+from .serializers import ProductSerializer
+from django_filters.rest_framework import DjangoFilterBackend
+
+class ProductList(generics.ListCreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['id','title','category','stock']
+
+class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
