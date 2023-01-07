@@ -31,12 +31,14 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name = 'profile'),
     path('adress/', views.ProfileView.as_view(), name = 'address'),
 
-    #login auth
+    #login_auth
     path('registration/', views.CustomerRegistrationView.as_view(), name= "customerregistration" ),
     path('accounts/login/', auth_view.LoginView.as_view(template_name = 'app/login.html', authentication_form = LoginForm), name = 'login'),
     path('password-resrt/',auth_view.PasswordResetView.as_view(template_name = 'app/password_reset.html', form_class = MyPasswordResetForm),name='password_reset'),
-    path('product/', views.ProductList.as_view(), name='product_list'),
-    path('product/<int:pk>/', views.ProductDetail.as_view(), name='product_detail'),
+   
+   #API_PATH
+    path('api/', views.ProductList.as_view(), name='api_list'),
+    path('api/<int:pk>/', views.ProductApi.as_view(), name='item_detail'),
 
 
     

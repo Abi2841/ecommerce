@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from urllib import request
 from django.views import View
-from .models import Product
+from .models import Customer, Product
 from django.db.models import Count
 from .forms import CustomerRegistrationForm, CustomerProfileForm
 from django.contrib import messages
@@ -54,7 +54,43 @@ class ProfileView(View):
         form = CustomerProfileForm()
         return render(request, 'app/profile.html',locals())  
     def post(self, request): 
-        return render(request, 'app/profile.html',locals())     
+        form = CustomerProfileForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            name = form.cleaned_data['name']
+            locality = form.cleaned_data['locality'] 
+            city = form.cleaned_data['city']
+            mobile = form.cleaned_data['mobile']
+            state = form.cleaned_data['state']
+            zipcode = form.cleaned_data['zipcode']
+            
+            reg= Customer(user=user, name=name, locality=locality, mobile=mobile, city=city, state=state, zipcode=zipcode)
+            reg.save()
+            messages.success(request, "Congratulations!!! Profile Saved Succesfully.")
+        else:
+            messages.warning(request,"Invalid Input Data")
+        return render (request, 'app/profile.html', locals())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #API_PART
@@ -69,6 +105,6 @@ class ProductList(generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['id','title','category','stock']
 
-class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
+class ProductApi(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer

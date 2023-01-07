@@ -31,6 +31,8 @@ class Customer(models.Model):
 
     locality =  models.CharField(max_length=200) 
     city = models.CharField(max_length=50)
+    
+    state = models.CharField(max_length=50)
 
     mobile = models.IntegerField(default=0)
 
